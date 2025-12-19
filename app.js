@@ -149,9 +149,7 @@ async function generateCryptoKeyPair() {
  * BACKEND API CONFIGURATION
  * Connect frontend to Express backend
  */
-const API_BASE_URL = window.location.hostname === 'localhost' 
-  ? 'http://localhost:5000' 
-  : '/api';
+const API_BASE_URL = 'http://localhost:5000';
 
 /**
  * API CALLS - Real backend integration
