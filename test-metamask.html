@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MetaMask Test</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      max-width: 600px;
+      margin: 50px auto;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    .card {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    button {
+      padding: 12px 24px;
+      background: #0066FF;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      width: 100%;
+      margin: 10px 0;
+    }
+    button:hover {
+      background: #0052CC;
+    }
+    .status {
+      padding: 15px;
+      margin: 15px 0;
+      border-radius: 8px;
+      background: #f0f0f0;
+      font-family: monospace;
+      font-size: 12px;
+      word-break: break-all;
+    }
+    .success { background: #d4edda; color: #155724; }
+    .error { background: #f8d7da; color: #721c24; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>🦊 MetaMask Connection Test</h1>
+    <p>This page tests if MetaMask is properly installed and working.</p>
+    
+    <button onclick="checkMetaMask()">1. Check if MetaMask is Installed</button>
+    <div id="check-result" class="status"></div>
+    
+    <button onclick="connectMetaMask()">2. Connect to MetaMask</button>
+    <div id="connect-result" class="status"></div>
+  </div>
+
+  <script>
+    function checkMetaMask() {
+      const result = document.getElementById('check-result');
+      
+      if (typeof window.ethereum !== 'undefined') {
+        result.className = 'status success';
+        result.innerHTML = `
+          ✅ MetaMask is installed!<br>
+          <strong>window.ethereum</strong> exists<br>
+          Provider: ${window.ethereum.isMetaMask ? 'MetaMask' : 'Other'}
+        `;
+      } else {
+        result.className = 'status error';
+        result.innerHTML = `
+          ❌ MetaMask NOT detected<br>
+          <strong>window.ethereum</strong> is undefined<br>
+          Please install MetaMask from <a href="https://metamask.io" target="_blank">metamask.io</a>
+        `;
+      }
+    }
+
+    async function connectMetaMask() {
+      const result = document.getElementById('connect-result');
+      
+      if (!window.ethereum) {
+        result.className = 'status error';
+        result.textContent = '❌ MetaMask not installed';
+        return;
+      }
+
+      try {
+        result.className = 'status';
+        result.textContent = '🔄 Connecting to MetaMask...';
+        
+        const accounts = await window.ethereum.request({
+          method: 'eth_requestAccounts'
+        });
+        
+        const address = accounts[0];
+        
+        result.className = 'status success';
+        result.innerHTML = `
+          ✅ Connected successfully!<br>
+          <strong>Wallet Address:</strong><br>
+          ${address}<br><br>
+          <strong>Short format:</strong> ${address.slice(0, 6)}...${address.slice(-6)}
+        `;
+        
+        console.log('MetaMask connected:', address);
+        
+      } catch (error) {
+        result.className = 'status error';
+        result.innerHTML = `
+          ❌ Connection failed<br>
+          <strong>Error:</strong> ${error.message}<br>
+          <strong>Code:</strong> ${error.code}
+        `;
+        console.error('MetaMask error:', error);
+      }
+    }
+
+    // Auto-check on page load
+    window.addEventListener('load', () => {
+      checkMetaMask();
+    });
+  </script>
+</body>
+</html>

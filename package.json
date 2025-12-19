@@ -1,0 +1,9 @@
+{
+  "name": "decentralized-social-media",
+  "version": "1.0.0",
+  "description": "Decentralized social media platform with IPFS and AI moderation",
+  "scripts": {
+    "dev": "python -m http.server 8080",
+    "backend": "cd backend && npm start"
+  }
+}
