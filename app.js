@@ -228,6 +228,38 @@ async function createCommentOnBackend(postHash, author, content) {
   }
 }
 
+// Fetch all posts from backend
+async function fetchPostsFromBackend() {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/post/all`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch posts: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    if (data.success && data.posts) {
+      // Convert timestamp strings to Date objects
+      return data.posts.map(post => ({
+        ...post,
+        timestamp: new Date(post.timestamp),
+        likes: post.likes || [],
+        comments: post.comments || []
+      }));
+    }
+    return [];
+  } catch (error) {
+    console.error('Failed to fetch posts from backend:', error);
+    // Fallback to localStorage if backend is unavailable
+    return loadPosts();
+  }
+}
+
 // Create like via backend
 async function createLikeOnBackend(postHash, likedBy) {
   try {
@@ -520,8 +552,8 @@ function renderLoginView() {
     loginExistingBtn.disabled = existingKeyInput.value.trim().length < 20;
   });
 
-  loginExistingBtn.addEventListener("click", () => {
-    handleLoginWithExistingKey(existingKeyInput.value.trim());
+  loginExistingBtn.addEventListener("click", async () => {
+    await handleLoginWithExistingKey(existingKeyInput.value.trim());
   });
 
   return el;
@@ -669,15 +701,15 @@ function renderKeyGeneratedView() {
   });
 
   // Continue to app
-  el.querySelector("#continue-to-app-btn").addEventListener("click", () => {
+  el.querySelector("#continue-to-app-btn").addEventListener("click", async () => {
     state.publicKey = state.generatedPublicKey;
     state.authMethod = "key";
     storeKey(state.publicKey, state.privateKey);
     localStorage.setItem("ss3_authMethod", "key");
     state.currentView = "app";
     
-    // Load existing posts and comments
-    state.posts = loadPosts();
+    // Load posts from backend (fallback to localStorage if backend unavailable)
+    state.posts = await fetchPostsFromBackend();
     state.comments = loadComments();
     
     if (!state.posts.length) {
@@ -701,7 +733,7 @@ function renderKeyGeneratedView() {
  * HANDLE LOGIN WITH EXISTING KEY
  * Validate and derive public key if needed
  */
-function handleLoginWithExistingKey(keyInput) {
+async function handleLoginWithExistingKey(keyInput) {
   if (!keyInput) {
     alert("Please paste a valid key.");
     return;
@@ -729,8 +761,8 @@ function handleLoginWithExistingKey(keyInput) {
   localStorage.setItem("ss3_authMethod", "key");
   state.currentView = "app";
   
-  // Load existing posts and comments
-  state.posts = loadPosts();
+  // Load posts from backend (fallback to localStorage if backend unavailable)
+  state.posts = await fetchPostsFromBackend();
   state.comments = loadComments();
   
   if (!state.posts.length) {
@@ -1556,7 +1588,7 @@ function renderComments(post) {
 }
 
 // Initialize app - check for existing login
-function initializeApp() {
+async function initializeApp() {
   const savedPublicKey = localStorage.getItem("ss3_publicKey");
   const savedAuthMethod = localStorage.getItem("ss3_authMethod");
 
@@ -1568,8 +1600,9 @@ function initializeApp() {
       state.privateKey = localStorage.getItem("ss3_privateKey");
     }
     
-    loadPosts();
-    loadComments();
+    // Load posts from backend (fallback to localStorage if backend unavailable)
+    state.posts = await fetchPostsFromBackend();
+    state.comments = loadComments();
     state.currentView = "app";
     console.log(`Auto-login: ${savedAuthMethod} - ${shortenKey(savedPublicKey)}`);
   }

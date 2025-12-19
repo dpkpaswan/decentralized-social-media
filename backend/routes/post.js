@@ -5,7 +5,7 @@
 const express = require('express');
 const router = express.Router();
 const multer = require('multer');
-const { createPost } = require('../controllers/postController');
+const { createPost, getPosts } = require('../controllers/postController');
 
 // Configure multer for media uploads
 const upload = multer({
@@ -24,6 +24,9 @@ const upload = multer({
     }
   }
 });
+
+// GET /api/post/all - Get all posts
+router.get('/all', getPosts);
 
 // POST /api/post/create
 router.post('/create', upload.single('file'), createPost);

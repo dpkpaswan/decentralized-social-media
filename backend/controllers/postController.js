@@ -27,6 +27,29 @@ const { moderateContent } = require('../services/aiModeration');
 const { uploadFileToIPFS, uploadJSONToIPFS } = require('../services/ipfsService');
 const { APIError } = require('../middleware/errorHandler');
 
+// In-memory posts storage (for demo - in production, use a database)
+const posts = [];
+
+/**
+ * Get all posts
+ */
+async function getPosts(req, res, next) {
+  try {
+    // Return posts in reverse chronological order
+    const sortedPosts = [...posts].sort((a, b) => 
+      new Date(b.timestamp) - new Date(a.timestamp)
+    );
+    
+    res.status(200).json({
+      success: true,
+      posts: sortedPosts,
+      count: sortedPosts.length
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
 /**
  * Create a new post
  * 
@@ -108,6 +131,20 @@ async function createPost(req, res, next) {
     const postIpfsHash = await uploadJSONToIPFS(postData);
     console.log(`✅ Post created: ${postIpfsHash}\n`);
 
+    // Store post metadata in memory for retrieval
+    const postMetadata = {
+      id: Date.now(),
+      author: author,
+      content: content,
+      timestamp: postData.timestamp,
+      ipfsHash: postIpfsHash,
+      mediaType: mediaType,
+      mediaIpfsHash: mediaIpfsHash,
+      likes: [],
+      comments: []
+    };
+    posts.push(postMetadata);
+
     // Success response with fastest gateway options
     res.status(201).json({
       success: true,
@@ -133,5 +170,6 @@ async function createPost(req, res, next) {
 }
 
 module.exports = {
-  createPost
+  createPost,
+  getPosts
 };

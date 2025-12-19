@@ -1,6 +1,15 @@
-# DecentraSocial (SS-3) - Decentralized Social Media MVP
+# 🌐 DecentraSocial - Decentralized Social Media Platform
 
-A fully decentralized social media prototype demonstrating key-based identity, IPFS content storage, and distributed interactions.
+> **HackForge'25 MVP** - A fully decentralized social media platform with key-based identity, IPFS storage, and AI moderation.
+
+[![Live Demo](https://img.shields.io/badge/demo-live-success)](https://dpkpaswan.github.io/decentralized-social-media/)
+[![Backend API](https://img.shields.io/badge/API-running-blue)](https://decentralized-social-media.onrender.com)
+[![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+
+## 🚀 Live Application
+
+- **Frontend:** [https://dpkpaswan.github.io/decentralized-social-media/](https://dpkpaswan.github.io/decentralized-social-media/)
+- **Backend API:** [https://decentralized-social-media.onrender.com](https://decentralized-social-media.onrender.com)
 
 ## 🔐 Authentication System
 
@@ -229,18 +238,104 @@ async function uploadToIPFS(file) {
 - Comments explain decentralization
 - Easy to understand flow
 
-## 📋 File Structure
+## � Quick Start
+
+### Prerequisites
+- **Python 3.x** (for local server)
+- **Node.js v18+** (for backend)
+- **Git**
+- **MetaMask extension** (optional) - [metamask.io](https://metamask.io)
+
+---
+
+### 1️⃣ Clone Repository
+
+```bash
+git clone https://github.com/dpkpaswan/decentralized-social-media.git
+cd decentralized-social-media
+```
+
+---
+
+### 2️⃣ Start Backend Server
+
+Open terminal #1:
+
+```bash
+cd backend
+npm install
+npm start
+```
+
+Backend runs at: `http://localhost:5000` ✅
+
+---
+
+### 3️⃣ Start Frontend Server
+
+Open terminal #2:
+
+```bash
+# Navigate to project root
+cd decentralized-social-media
+
+# Start Python HTTP server (required for MetaMask)
+python -m http.server 8080
+```
+
+**⚠️ Important:** MetaMask only works with `http://` URLs, not `file://`
+
+---
+
+### 4️⃣ Open Application
+
+Open browser and go to:
+```
+http://localhost:8080/index.html
+```
+
+**✅ App is now running!**
+
+---
+
+## 🧪 Test MetaMask
+
+Before using the main app, test MetaMask:
+
+1. Open: `http://localhost:8080/test-metamask.html`
+2. Click "Check if MetaMask is Installed"
+3. Click "Connect to MetaMask"
+4. Approve popup
+5. See your wallet address ✅
+
+---
+
+## 📁 File Structure
 
 ```
-/
-├── index.html          # Entry point
-├── app.js              # Full application logic
-│   ├── Key generation (Web Crypto)
-│   ├── IPFS upload simulation
-│   ├── Post/Comment/Like logic
-│   └── UI rendering
-├── styles.css          # Complete styling
-└── README.md           # This file
+decentralized-social-media/
+├── index.html              # Main entry point
+├── app.js                  # 1,580 lines - Full app logic
+├── styles.css              # Instagram/Twitter-style UI
+├── test-metamask.html      # MetaMask connection test
+│
+├── backend/                # Express API Gateway
+│   ├── server.js           # Main server (174 lines)
+│   ├── package.json        # Dependencies
+│   ├── .env               # API keys (not in git)
+│   │
+│   ├── controllers/        # Request handlers
+│   ├── routes/             # API endpoints
+│   ├── services/           # IPFS + AI logic
+│   └── middleware/         # Error handling
+│
+├── api/                    # Serverless wrapper
+│   └── index.js
+│
+├── README.md               # This file
+├── vercel.json            # Vercel config
+├── render.yaml            # Render.com config
+└── package.json           # Root package
 ```
 
 ## 🔑 Key Highlights
@@ -343,12 +438,36 @@ All major functions include comments explaining:
 - All actions should be signed (full implementation needed)
 - Content validation before IPFS upload
 
+## � Deployment
+
+### Frontend → GitHub Pages
+1. Push code to GitHub
+2. Settings → Pages → Source: `main` branch  
+3. Live at: `https://dpkpaswan.github.io/decentralized-social-media/`
+
+### Backend → Render.com
+1. Sign up at [render.com](https://render.com)
+2. New Web Service → Connect GitHub repo
+3. **Settings:**
+   - Root Directory: `backend`
+   - Build Command: `npm install`
+   - Start Command: `node server.js`
+4. **Environment Variables:**
+   - `PINATA_API_KEY`
+   - `PINATA_SECRET_KEY`
+   - `GEMINI_API_KEY`
+   - `NODE_ENV=production`
+5. Deploy! 🚀
+
+---
+
 ## 🌐 Browser Support
 
-- ✅ Chrome/Edge (Web Crypto API)
-- ✅ Firefox (Web Crypto API)
-- ✅ Safari (Web Crypto API)
-- ⚠️ Internet Explorer (not supported)
+- ✅ Chrome/Edge (Web Crypto API + MetaMask)
+- ✅ Firefox (Web Crypto API + MetaMask)
+- ✅ Brave (Web Crypto API + MetaMask)
+- ⚠️ Safari (Limited MetaMask support)
+- ❌ Internet Explorer (Not supported)
 
 ## 📖 Learn More
 
