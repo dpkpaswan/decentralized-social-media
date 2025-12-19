@@ -151,7 +151,7 @@ async function generateCryptoKeyPair() {
  */
 const API_BASE_URL = window.location.hostname === 'localhost' 
   ? 'http://localhost:5000' 
-  : 'https://decentralized-social-backend.onrender.com';
+  : 'https://decentralized-social-media.onrender.com';
 
 /**
  * API CALLS - Real backend integration
