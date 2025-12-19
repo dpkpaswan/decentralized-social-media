@@ -2,8 +2,13 @@
   "name": "decentralized-social-media",
   "version": "1.0.0",
   "description": "Decentralized social media platform with IPFS and AI moderation",
+  "main": "backend/server.js",
   "scripts": {
+    "start": "cd backend && node server.js",
     "dev": "python -m http.server 8080",
     "backend": "cd backend && npm start"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }
