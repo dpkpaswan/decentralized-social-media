@@ -53,7 +53,35 @@ This application uses **cryptographic key-based identity** instead of traditiona
 
 ## 📱 Core Features
 
+### 🆕 Multi-User Post Sharing
+
+**The Problem Solved:**
+- Posts are no longer browser-specific!
+- When User A creates a post, User B can see it
+- Backend acts as a discovery layer while IPFS stores content
+- Login from any device to see all posts
+
+**How it works:**
+```javascript
+// When User A creates a post
+Post → AI Moderation → IPFS Storage → Backend Index
+
+// When User B logs in (different browser/device)
+Frontend → Backend: GET /api/post/all → Display all posts
+```
+
+**Why this maintains decentralization:**
+- Post content still stored on IPFS (not backend database)
+- Backend only indexes metadata (author, timestamp, IPFS hash)
+- Users can verify content via IPFS hashes
+- Backend is replaceable (anyone can run their own)
+
 ### 1. Image & Video Posts
+
+**Enhanced Features:**
+- Image preview during upload (max 300px, contained fit)
+- Real-time upload progress
+- IPFS hash display for verification
 
 **How it works:**
 ```javascript
@@ -127,15 +155,23 @@ Like = {
 
 ## 🏗️ Technical Architecture
 
-### Client-Side Only
+### Hybrid Decentralized Architecture
 
 ```
 ┌─────────────────┐
 │   Web Browser   │
 ├─────────────────┤
 │  - Key Gen      │  ← Web Crypto API
-│  - Local Store  │  ← localStorage/IndexedDB
-│  - IPFS Upload  │  ← Mock (real: ipfs-http-client)
+│  - Local Cache  │  ← localStorage
+└─────────────────┘
+         ↕
+┌─────────────────┐
+│  Backend API    │  ← Stateless Gateway
+│  (Express.js)   │
+├─────────────────┤
+│  - AI Moderate  │  ← Content safety
+│  - Post Index   │  ← In-memory (multi-user)
+│  - IPFS Bridge  │  ← Upload/fetch
 └─────────────────┘
          ↕
 ┌─────────────────┐
@@ -144,22 +180,36 @@ Like = {
 └─────────────────┘
 ```
 
-**No Backend Servers:**
-- Authentication: Browser crypto
-- Storage: IPFS
-- State: Client-side only
-- Identity: Public key
+**Architecture Benefits:**
+- Authentication: Browser crypto (no passwords)
+- Storage: IPFS (decentralized, immutable)
+- Post Index: Backend (enables multi-user discovery)
+- Identity: Public key (no central authority)
 
 ### Data Flow
 
 **Creating a Post:**
 ```
 1. User writes post + attaches image
-2. Image uploaded to IPFS → Get CID
-3. Post JSON created with image CID
-4. Post JSON uploaded to IPFS → Get post CID
-5. Post CID displayed in feed
-6. All verifiable via IPFS
+2. Frontend → Backend: POST /api/post/create
+3. Backend: AI moderation check
+4. If approved: Upload image to IPFS → Get CID
+5. Create post JSON with image CID
+6. Upload post JSON to IPFS → Get post CID
+7. Store post metadata in backend (for discovery)
+8. Return to frontend with IPFS hashes
+9. Post appears in all users' feeds
+10. All content verifiable via IPFS
+```
+
+**Fetching Posts (Multi-User):**
+```
+1. User logs in from any device/browser
+2. Frontend → Backend: GET /api/post/all
+3. Backend returns all post metadata
+4. Frontend displays posts with IPFS content
+5. Media loaded from IPFS gateways
+6. Comments and likes fetched as needed
 ```
 
 **Liking a Post:**
@@ -182,6 +232,27 @@ Like = {
 6. Display under post
 ```
 
+## � API Endpoints
+
+### Backend REST API
+
+**Posts:**
+- `GET /api/post/all` - Fetch all posts (for multi-user feed)
+- `POST /api/post/create` - Create new post with AI moderation
+
+**Comments:**
+- `POST /api/comment/create` - Add comment to post
+
+**Likes:**
+- `POST /api/like/toggle` - Like/unlike a post
+
+**IPFS:**
+- `POST /api/ipfs/upload/file` - Upload media to IPFS
+- `POST /api/ipfs/upload/json` - Upload JSON to IPFS
+
+**Moderation:**
+- `POST /api/moderate/check` - Check content with AI
+
 ## 🔍 Verifiability
 
 Everything is verifiable:
@@ -190,16 +261,21 @@ Everything is verifiable:
 2. **Media:** Visit `https://ipfs.io/ipfs/[mediaHash]`
 3. **Identity:** Public key in every action
 4. **Signatures:** Can verify authorship cryptographically
+5. **Backend transparency:** All IPFS hashes returned in API responses
 
 ## 🚀 Production Considerations
 
-### Current (Prototype)
-- Mock IPFS upload (generates hash)
-- localStorage for key storage
-- Simplified key validation
-- Client-side only
+### Current Implementation
+✅ Real IPFS uploads (via Pinata)
+✅ AI content moderation (Gemini)
+✅ Multi-user post sharing
+✅ Backend post indexing
+✅ localStorage for key storage
+✅ Professional UI/UX
+⚠️ In-memory post storage (resets on server restart)
+⚠️ Simplified signature validation
 
-### Production Implementation
+### Production Enhancements Needed
 ```javascript
 // Real IPFS upload
 import { create } from 'ipfs-http-client'
@@ -220,6 +296,27 @@ async function uploadToIPFS(file) {
 - Check IPFS content integrity
 - Implement peer discovery
 ```
+
+## ✨ Recent Improvements (Dec 2025)
+
+### 1. Multi-User Data Sharing ✅
+- **Backend post index:** All users see all posts
+- **API endpoint:** `GET /api/post/all`
+- **Auto-sync:** Posts fetch on login from any device
+- **Fallback:** Uses localStorage if backend unavailable
+
+### 2. Enhanced UI/UX ✅
+- **Key display page:** Fully styled with animations
+- **Image upload preview:** Size-constrained (max 300px)
+- **Copy/Download buttons:** Professional styling with hover effects
+- **Warning boxes:** Clear yellow alerts for important information
+- **Responsive design:** Works on mobile and desktop
+
+### 3. Backend Improvements ✅
+- **In-memory post storage:** Fast access for demos
+- **AI content moderation:** Gemini API integration
+- **IPFS pinning:** Pinata service for permanent storage
+- **Error handling:** Graceful fallbacks and clear messages
 
 ## 🎯 Hackathon-Safe Features
 
@@ -325,8 +422,18 @@ decentralized-social-media/
 │   ├── .env               # API keys (not in git)
 │   │
 │   ├── controllers/        # Request handlers
+│   │   ├── postController.js    # Create + Get posts
+│   │   ├── commentController.js # Comment management
+│   │   ├── likeController.js    # Like actions
+│   │   └── ipfsController.js    # IPFS operations
 │   ├── routes/             # API endpoints
+│   │   ├── post.js         # GET /all, POST /create
+│   │   ├── comment.js      # Comment routes
+│   │   ├── like.js         # Like routes
+│   │   └── ipfs.js         # File upload routes
 │   ├── services/           # IPFS + AI logic
+│   │   ├── ipfsService.js  # Pinata integration
+│   │   └── aiModeration.js # Gemini AI content check
 │   └── middleware/         # Error handling
 │
 ├── api/                    # Serverless wrapper

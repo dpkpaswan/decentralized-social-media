@@ -548,6 +548,25 @@ body {
   transform: translateY(0);
 }
 
+/* Refresh Feed Button */
+.refresh-feed-btn:hover:not(:disabled) {
+  background: var(--gray-50) !important;
+  border-color: var(--primary-blue) !important;
+  color: var(--primary-blue) !important;
+  transform: translateY(-1px);
+}
+
+.refresh-feed-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.feed-section-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--gray-900);
+}
+
 .post-btn:disabled {
   opacity: 0.4;
   cursor: not-allowed;

@@ -1064,6 +1064,10 @@ function renderCreateTab() {
           console.log('🛡️  Moderation:', result.moderation === 'ai' ? 'AI' : 'Fallback (AI unavailable)');
         }
         
+        // Refresh posts from backend to get all posts including from other users
+        state.posts = await fetchPostsFromBackend();
+        savePosts();
+        
       } else {
         // Post rejected by AI moderation
         state.lastModeration = {
@@ -1301,6 +1305,10 @@ function renderComposeSnippet() {
         console.log('✅ Post created:', result.postIpfsHash);
         console.log('🔗 Verify at:', result.verifyUrl);
         
+        // Refresh posts from backend to get all posts including from other users
+        state.posts = await fetchPostsFromBackend();
+        savePosts();
+        
       } else {
         // Post rejected by moderation
         state.activity.unshift({
@@ -1351,12 +1359,39 @@ function formatTimestamp(date) {
 function renderFeedSection(title) {
   const el = createElement(`
     <section aria-label="${title}">
-      <h2 class="feed-section-title">${title}</h2>
+      <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; border-bottom: 1px solid var(--gray-200);">
+        <h2 class="feed-section-title" style="margin: 0;">${title}</h2>
+        <button class="refresh-feed-btn" id="refresh-feed-btn" style="padding: 0.5rem 1rem; border: 1px solid var(--gray-300); border-radius: var(--radius-md); background: var(--white); color: var(--gray-700); cursor: pointer; font-size: 0.875rem; display: flex; align-items: center; gap: 0.5rem;">
+          <span>🔄</span>
+          <span>Refresh</span>
+        </button>
+      </div>
       <div class="feed-list"></div>
     </section>
   `);
 
   const list = el.querySelector(".feed-list");
+  const refreshBtn = el.querySelector("#refresh-feed-btn");
+  
+  // Refresh button handler
+  refreshBtn.addEventListener("click", async () => {
+    refreshBtn.disabled = true;
+    refreshBtn.innerHTML = '<span>⏳</span><span>Loading...</span>';
+    
+    try {
+      // Fetch latest posts from backend
+      state.posts = await fetchPostsFromBackend();
+      savePosts(); // Update local cache
+      render(); // Re-render entire view
+    } catch (error) {
+      console.error('Failed to refresh posts:', error);
+      alert('Failed to refresh feed. Please try again.');
+    } finally {
+      refreshBtn.disabled = false;
+      refreshBtn.innerHTML = '<span>🔄</span><span>Refresh</span>';
+    }
+  });
+  
   if (!state.posts.length) {
     list.innerHTML = `
       <div class="empty-state">
