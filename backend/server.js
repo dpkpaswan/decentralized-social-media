@@ -50,14 +50,19 @@ const PORT = process.env.PORT || 5000;
 // MIDDLEWARE
 // ================================================================
 
-// CORS - Allow frontend to connect (including file:// protocol)
+// CORS - Allow frontend to connect
 app.use(cors({
   origin: function(origin, callback) {
-    // Allow requests with no origin (like mobile apps, curl, or file://)
-    // or from localhost:3000
-    const allowedOrigins = ['http://localhost:3000', 'http://127.0.0.1:3000'];
+    // Allow requests from GitHub Pages, localhost, and file://
+    const allowedOrigins = [
+      'http://localhost:3000', 
+      'http://localhost:8080',
+      'http://127.0.0.1:3000',
+      'https://dpkpaswan.github.io'
+    ];
     
-    if (!origin || allowedOrigins.includes(origin)) {
+    // Allow requests with no origin (file://, mobile apps) or from allowed origins
+    if (!origin || allowedOrigins.some(allowed => origin.startsWith(allowed))) {
       callback(null, true);
     } else {
       callback(null, true); // Allow all for hackathon demo
