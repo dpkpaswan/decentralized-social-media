@@ -766,6 +766,215 @@ body {
 }
 
 /* ============================================================
+   KEY DISPLAY PAGE STYLES
+   ============================================================ */
+
+.auth-card {
+  background: var(--white);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-xl);
+  width: 100%;
+  max-width: 500px;
+  padding: var(--space-2xl);
+  margin: 0 auto;
+}
+
+.key-display-card {
+  text-align: center;
+}
+
+.success-icon {
+  font-size: 4rem;
+  margin-bottom: var(--space-lg);
+  animation: scaleIn 0.3s ease-out;
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.auth-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--gray-900);
+  margin-bottom: var(--space-sm);
+}
+
+.auth-subtitle {
+  font-size: 1rem;
+  color: var(--gray-600);
+  margin-bottom: var(--space-xl);
+}
+
+.key-display-box {
+  background: var(--gray-50);
+  border: 2px solid var(--gray-200);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  margin-bottom: var(--space-lg);
+  text-align: left;
+}
+
+.key-display-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--gray-700);
+  margin-bottom: var(--space-sm);
+}
+
+.key-display-value {
+  font-family: 'Courier New', monospace;
+  font-size: 0.75rem;
+  color: var(--gray-900);
+  background: var(--white);
+  padding: var(--space-md);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--gray-300);
+  word-break: break-all;
+  line-height: 1.5;
+  margin-bottom: var(--space-md);
+}
+
+.key-stored-badge {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: 0.875rem;
+  color: var(--success);
+  font-weight: 500;
+}
+
+.key-actions {
+  display: flex;
+  gap: var(--space-md);
+  margin-bottom: var(--space-xl);
+}
+
+.key-action-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-md);
+  background: var(--gray-100);
+  border: 2px solid var(--gray-200);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--gray-700);
+  transition: all 0.2s ease;
+}
+
+.key-action-btn:hover {
+  background: var(--primary-blue-light);
+  border-color: var(--primary-blue);
+  color: var(--primary-blue);
+  transform: translateY(-2px);
+}
+
+.key-action-btn:active {
+  transform: translateY(0);
+}
+
+.key-action-btn span:first-child {
+  font-size: 1.5rem;
+}
+
+.warning-box {
+  display: flex;
+  gap: var(--space-md);
+  align-items: flex-start;
+  background: #FEF3C7;
+  border: 2px solid #FCD34D;
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  margin-bottom: var(--space-xl);
+  text-align: left;
+}
+
+.warning-icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.warning-box p {
+  font-size: 0.875rem;
+  color: var(--gray-800);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.warning-box strong {
+  color: var(--gray-900);
+}
+
+.primary-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  padding: var(--space-md) var(--space-xl);
+  background: var(--primary-blue);
+  color: var(--white);
+  border: none;
+  border-radius: var(--radius-lg);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: var(--space-md);
+}
+
+.primary-btn:hover {
+  background: var(--primary-blue-hover);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.primary-btn:active {
+  transform: translateY(0);
+}
+
+.primary-btn-icon {
+  font-size: 1.25rem;
+}
+
+.text-btn {
+  width: 100%;
+  background: none;
+  border: none;
+  color: var(--gray-600);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  padding: var(--space-sm);
+  transition: color 0.2s ease;
+}
+
+.text-btn:hover {
+  color: var(--primary-blue);
+}
+
+.center-layout {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: var(--space-lg);
+}
+
+/* ============================================================
    RESPONSIVE DESIGN
    ============================================================ */
 
